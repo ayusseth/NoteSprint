@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html><!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>NoteSprint — Minimal Notes</title>
+    <style>
+        :root{
+          --bg:#0f172a;          /* slate-900 */
+          --panel:#111827;       /* gray-900 */
+          --muted:#1f2937;       /* gray-800 */
+          --soft:#0b1222;
+          --text:#e5e7eb;        /* gray-200 */
+          --sub:#9ca3af;         /* gray-400 */
+          --brand:#7c3aed;       /* violet-600 */
+          --brand-2:#22d3ee;     /* cyan-400 */
+          --ok:#10b981;          /* emerald-500 */
+          --warn:#f59e0b;        /* amber-500 */
+          --danger:#ef4444;      /* red-500 */
+          --card:#0b1222;
+          --card-hover:#0d162b;
+          --ring: rgba(124,58,237,.35);
+          --shadow: 0 10px 30px rgba(2,8,23,.45);
+          --radius:18px;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+          margin:0; background:radial-gradient(1000px 600px at -5% -10%, #1f114d20, transparent),
+                             radial-gradient(900px 500px at 105% 110%, #0ea5e920, transparent),
+                             var(--bg);
+          color:var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+          -webkit-font-smoothing:antialiased; line-height:1.4;
+        }
+
+        .shell{max-width:1320px; margin:40px auto; padding:0 20px; display:grid; gap:24px;
+               grid-template-columns: 360px 1fr;}
+        @media (max-width: 980px){ .shell{grid-template-columns: 1fr} }
+
+        .panel{
+          background: linear-gradient(180deg, var(--panel), var(--soft));
+          border:1px solid #ffffff12; border-radius: var(--radius); box-shadow:var(--shadow);
+        }
+        .pad{ padding:22px }
+        .row{display:flex; align-items:center; gap:12px}
+        .muted{color:var(--sub)}
+        .badge{display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:6px 10px;
+               border-radius:999px; background:#ffffff12; border:1px solid #ffffff10}
+        .chip{display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:6px 10px;
+               border-radius:10px; background:#0f1a33; border:1px solid #ffffff10}
+        .title{font-size:18px; font-weight:700}
+        .logo{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+        .logo .sq{width:54px; height:54px; border-radius:16px; background: linear-gradient(135deg, var(--brand), #fb7185);
+                  display:grid; place-items:center; box-shadow: 0 10px 25px rgba(124,58,237,.45)}
+        .logo b{font-size:22px}
+        .pill-tabs{display:flex; gap:10px; margin-top:18px}
+        .pill-tabs button{
+          background:#141c33; border:1px solid #ffffff10; color:var(--sub); padding:8px 12px; border-radius:12px; cursor:pointer
+        }
+        .pill-tabs button.active{ background:#1b2750; color:var(--text); border-color:#4158ff40 }
+
+        input, textarea{
+          width:100%; background:#0e1630; color:var(--text); border:1px solid #2b375d; border-radius:14px;
+          padding:12px 14px; outline: none; transition: box-shadow .2s, border-color .2s;
+        }
+        input:focus, textarea:focus{ border-color: var(--brand); box-shadow:0 0 0 6px var(--ring) }
+        textarea{ min-height:120px; resize: vertical }
+
+        .actions{display:flex; gap:12px; flex-wrap:wrap}
+        .btn{
+          border:1px solid #ffffff18; background:#171f3c; color:var(--text); padding:10px 14px; border-radius:12px;
+          cursor:pointer; transition: transform .05s ease, background .2s, border .2s, opacity .2s;
+          display:inline-flex; align-items:center; gap:10px; font-weight:600
+        }
+        .btn:hover{ background:#1b2750; border-color:#4158ff40 }
+        .btn:active{ transform: translateY(1px) }
+        .btn.primary{ background: linear-gradient(135deg, var(--brand), #2563eb); border-color: transparent }
+        .btn.ok{ background: linear-gradient(135deg, var(--ok), #22c55e); border-color: transparent }
+        .btn.warn{ background: linear-gradient(135deg, var(--warn), #f97316); border-color: transparent }
+        .btn.danger{ background: linear-gradient(135deg, var(--danger), #f43f5e); border-color: transparent }
+
+        /* Notes grid */
+        .toolbar{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid #ffffff12}
+        .toolbar input{max-width:360px}
+        .grid{display:grid; gap:16px; padding:18px; grid-template-columns: repeat(3, minmax(0, 1fr))}
+        @media (max-width:1200px){ .grid{grid-template-columns: repeat(2, minmax(0, 1fr))} }
+        @media (max-width:700px){ .grid{grid-template-columns: 1fr} }
+
+        .card{
+          background:linear-gradient(180deg, var(--card), #0a1122); border:1px solid #ffffff10; border-radius:16px;
+          padding:16px; display:flex; flex-direction:column; gap:10px; min-height:140px; transition: transform .15s, background .2s, border .2s;
+        }
+        .card:hover{ background:var(--card-hover); transform: translateY(-2px) }
+
+        .card .meta{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:12px; color:var(--sub)}
+        .card .ops{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
+        .card .ops .btn{padding:7px 10px; border-radius:10px; font-size:12px}
+
+        .empty{ padding:30px; text-align:center; color:var(--sub) }
+
+        .toast{
+          position: fixed; right: 16px; bottom: 16px; background:#0b1227; border:1px solid #ffffff20; color:var(--text);
+          padding:12px 14px; border-radius:12px; box-shadow:var(--shadow); opacity:0; transform: translateY(10px);
+          transition: opacity .2s, transform .2s;
+        }
+        .toast.show{ opacity:1; transform: translateY(0) }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <!-- Left panel: Create / Update -->
+    <section class="panel pad" id="leftPanel">
+        <div class="logo">
+            <div class="sq">🗒️</div>
+            <div>
+                <b>NoteSprint</b>
+                <div class="muted">Fast • Minimal • Delightful</div>
+            </div>
+        </div>
+
+        <div style="display:grid; gap:12px; margin-top:8px">
+            <input id="title" placeholder="Quick title (e.g. Meeting notes)"/>
+            <textarea id="content" placeholder="Write something..."></textarea>
+        </div>
+
+        <div class="actions" style="margin-top:14px">
+            <button class="btn primary" id="createBtn">➕ Create</button>
+            <button class="btn ok" id="updateBtn" disabled>✏️ Update</button>
+            <button class="btn warn" id="clearBtn">🧹 Clear</button>
+        </div>
+
+        <div class="pill-tabs" style="margin-top:18px">
+            <span class="badge">Tip: <kbd>Ctrl + Enter</kbd> to create</span>
+            <span class="chip">📌 Pin important notes</span>
+        </div>
+
+        <div class="muted" style="margin-top:18px; font-size:12px">
+            Drafting? Use <b>Shift+Enter</b> for a new line. Select a card to edit quickly.
+        </div>
+    </section>
+
+    <!-- Right panel: Notes list -->
+    <section class="panel" id="rightPanel">
+        <div class="toolbar">
+            <div class="title">All Notes</div>
+            <input id="search" placeholder="Search notes, title, content"/>
+        </div>
+        <div class="grid" id="notesGrid"></div>
+        <div class="empty" id="emptyState" style="display:none">No notes yet. Create your first note ➕</div>
+    </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    // === API base (relative path so same-origin -> no CORS) ===
+    const API = '/api/notes';
+
+    // === Helpers ===
+    const $ = sel => document.querySelector(sel);
+    const grid = $('#notesGrid');
+    const empty = $('#emptyState');
+    const toast = $('#toast');
+
+    let editingId = null;
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), 2200);
+    }
+
+    function toLocalTime(iso){
+      if(!iso) return '';
+      const d = new Date(iso);
+      const dt = d.toLocaleString(undefined, {
+        year:'numeric', month:'short', day:'2-digit',
+        hour:'2-digit', minute:'2-digit'
+      });
+      return dt;
+    }
+
+    function sanitize(s){ return (s ?? '').toString(); }
+
+    // Debounce
+    function debounce(fn, ms=250){
+      let t; return (...args)=>{ clearTimeout(t); t = setTimeout(()=>fn(...args), ms); };
+    }
+
+    // === CRUD ===
+    async function listNotes(){
+      const q = $('#search').value.trim().toLowerCase();
+      const res = await fetch(API);
+      if(!res.ok){ showToast('Failed to fetch notes'); return; }
+      let data = await res.json();
+      // Optional sort: latest updated first if available, else id desc
+      data.sort((a,b)=>{
+        const au = a.updatedAt || a.createdAt || 0;
+        const bu = b.updatedAt || b.createdAt || 0;
+        return (new Date(bu)) - (new Date(au));
+      });
+      if(q) data = data.filter(n =>
+        (n.title||'').toLowerCase().includes(q) ||
+        (n.content||'').toLowerCase().includes(q)
+      );
+      renderNotes(data);
+    }
+
+    async function createNote(){
+      const title = $('#title').value.trim();
+      const content = $('#content').value.trim();
+      if(!title && !content){ showToast('Write something first'); return; }
+
+      const res = await fetch(API, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ title, content })
+      });
+      if(!res.ok){ showToast('Create failed'); return; }
+
+      $('#title').value=''; $('#content').value='';
+      showToast('Note created');
+      await listNotes();
+    }
+
+    async function loadIntoEditor(note){
+      editingId = note.id;
+      $('#title').value = sanitize(note.title);
+      $('#content').value = sanitize(note.content);
+      $('#updateBtn').disabled = false;
+      $('#createBtn').disabled = true;
+      $('#leftPanel').scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    async function updateNote(){
+      if(!editingId){ return; }
+      const title = $('#title').value.trim();
+      const content = $('#content').value.trim();
+      const res = await fetch(`${API}/${editingId}`, {
+        method:'PUT',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ title, content })
+      });
+      if(!res.ok){ showToast('Update failed'); return; }
+      showToast('Note updated');
+      clearEditor();
+      await listNotes();
+    }
+
+    async function deleteNote(id){
+      if(!confirm('Delete this note?')) return;
+      const res = await fetch(`${API}/${id}`, { method:'DELETE' });
+      if(!res.ok){ showToast('Delete failed'); return; }
+      showToast('Note deleted');
+      await listNotes();
+    }
+
+    function clearEditor(){
+      editingId = null;
+      $('#title').value = '';
+      $('#content').value = '';
+      $('#updateBtn').disabled = true;
+      $('#createBtn').disabled = false;
+    }
+function shareNote(id) {
+  // For single-note page: note.html?id={id}
+  const shareUrl = `${window.location.origin}/note.html?id=${id}`;
+  navigator.clipboard.writeText(shareUrl)
+    .then(() => {
+      showToast("🔗 Shareable link copied!");
+    })
+    .catch(() => {
+      alert("Failed to copy link. Here it is:\n" + shareUrl);
+    });
+}
+
+    // === UI render ===
+    function renderNotes(arr){
+      grid.innerHTML = '';
+      if(!arr.length){ empty.style.display='block'; return; }
+      empty.style.display='none';
+
+      for(const n of arr){
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="row">
+            <span class="badge">🗒️ Note</span>
+            ${ n.updatedAt ? `<span class="badge">⏱️ Updated: ${toLocalTime(n.updatedAt)}</span>` : '' }
+            ${ n.createdAt ? `<span class="badge">🕒 Created: ${toLocalTime(n.createdAt)}</span>` : '' }
+            <span class="badge">#${n.id}</span>
+          </div>
+          <div style="font-weight:700; font-size:16px">${sanitize(n.title) || '(Untitled)'}</div>
+          <div class="muted" style="white-space:pre-wrap">${sanitize(n.content) || ''}</div>
+          <div class="ops">
+            <button class="btn" data-edit="${n.id}">✏️ Edit</button>
+            <button class="btn danger" data-del="${n.id}">🗑️ Delete</button>
+            <button class="btn" data-share="${n.id}">🔗 Share</button>
+          </div>
+        `;
+        // Wire handlers
+        card.querySelector(`[data-edit="${n.id}"]`).addEventListener('click', ()=> loadIntoEditor(n));
+        card.querySelector(`[data-del="${n.id}"]`).addEventListener('click', ()=> deleteNote(n.id));
+        card.querySelector(`[data-share="${n.id}"]`).addEventListener('click', ()=> shareNote(n.id));
+        grid.appendChild(card);
+      }
+    }
+
+    // === Events ===
+    $('#createBtn').addEventListener('click', createNote);
+    $('#updateBtn').addEventListener('click', updateNote);
+    $('#clearBtn').addEventListener('click', clearEditor);
+    $('#search').addEventListener('input', debounce(listNotes, 200));
+    document.addEventListener('keydown', e=>{
+      if((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+        if(!editingId) createNote(); else updateNote();
+      }
+    });
+
+    // Initial load
+    listNotes();
+</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note</title>
+    <style>
+        body {
+          font-family: "Segoe UI", sans-serif;
+          background: #0f172a;
+          color: #f8fafc;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+
+        .note-card {
+          background: #1e293b;
+          border-radius: 16px;
+          padding: 24px;
+          max-width: 600px;
+          width: 90%;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+          text-align: left;
+          animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .note-title {
+          font-size: 1.6rem;
+          font-weight: bold;
+          margin-bottom: 12px;
+          color: #38bdf8;
+        }
+
+        .note-content {
+          font-size: 1rem;
+          line-height: 1.6;
+          color: #cbd5e1;
+          white-space: pre-wrap;
+        }
+
+        .error {
+          color: #f87171;
+          font-weight: bold;
+          text-align: center;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+<div class="note-card" id="note">
+    Loading note...
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const noteId = params.get("id");
+
+    const noteContainer = document.getElementById("note");
+
+    if (!noteId) {
+      noteContainer.innerHTML = `<p class="error">❌ Invalid note link</p>`;
+    } else {
+      fetch(`/api/notes/${noteId}`)
+        .then(res => {
+          if (!res.ok) throw new Error("Note not found");
+          return res.json();
+        })
+        .then(note => {
+          noteContainer.innerHTML = `
+            <h2 class="note-title">📝 ${note.title}</h2>
+            <p class="note-content">${note.content}</p>
+          `;
+        })
+        .catch(() => {
+          noteContainer.innerHTML = `<p class="error">❌ Note not found</p>`;
+        });
+    }
+</script>
+</body>
+</html>
