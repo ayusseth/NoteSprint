@@ -44,6 +44,11 @@ public class NoteController {
     @PostMapping
     public Note create(@RequestBody Note n){ return service.create(n); }
 
+    @Operation(summary = "Update a note by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Note not found")
+    })
     @PutMapping("/{id}")
     public Note update(@PathVariable Long id, @RequestBody Note n){ return service.update(id, n); }
 
