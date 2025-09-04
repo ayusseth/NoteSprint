@@ -52,6 +52,11 @@ public class NoteController {
     @PutMapping("/{id}")
     public Note update(@PathVariable Long id, @RequestBody Note n){ return service.update(id, n); }
 
+    @Operation(summary = "Delete a note by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Note deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Note not found")
+    })
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){ service.delete(id); }
 }
