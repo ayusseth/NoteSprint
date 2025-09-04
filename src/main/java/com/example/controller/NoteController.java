@@ -24,6 +24,11 @@ public class NoteController {
     @GetMapping
     public List<Note> all(){ return service.listAll(); }
 
+    @Operation(summary = "Get note by ID", description = "Fetch a single note by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Note found"),
+            @ApiResponse(responseCode = "404", description = "Note not found")
+    })
     @GetMapping("/{id}")
     public Note get(@PathVariable Long id){ return service.get(id); }
     @GetMapping("/notes/{id}")
