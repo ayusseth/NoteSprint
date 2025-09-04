@@ -37,7 +37,10 @@ public class NoteController {
         return note.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    @Operation(summary = "Create a new note")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Note created successfully")
+    })
     @PostMapping
     public Note create(@RequestBody Note n){ return service.create(n); }
 
