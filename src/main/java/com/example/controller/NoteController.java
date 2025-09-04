@@ -13,6 +13,10 @@ import java.util.Optional;
 public class NoteController {
     private final NoteService service;
     public NoteController(NoteService service){ this.service = service; }
+    @Operation(summary = "Get all notes", description = "Returns a list of all notes")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of notes retrieved successfully")
+    })
 
     @GetMapping
     public List<Note> all(){ return service.listAll(); }
